@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from io import BytesIO
 import time
-
 # Configuração da página
 st.set_page_config(
     page_title="Yamazumi Simulator Pro",
@@ -12,11 +11,9 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="expanded"
 )
-
 # Título da aplicação
 st.title("📊 Yamazumi Simulator Pro")
 st.markdown("Sistema avançado para balanceamento de linhas de montagem de chicotes")
-
 # Sidebar para upload e parâmetros
 with st.sidebar:
     st.header("⚙️ Configurações")
@@ -71,7 +68,6 @@ with st.sidebar:
         value=4.0,
         step=0.5
     )
-
 # Função para calcular balanceamento
 def calcular_balanceamento(df_tarefas, tempo_ciclo, max_postos):
     """
@@ -120,7 +116,6 @@ def calcular_balanceamento(df_tarefas, tempo_ciclo, max_postos):
         })
     
     return postos
-
 # Função para gerar gráfico Yamazumi
 def gerar_grafico_yamazumi(postos, tempo_ciclo):
     """
@@ -135,10 +130,13 @@ def gerar_grafico_yamazumi(postos, tempo_ciclo):
     # Criar barras empilhadas
     bottom = np.zeros(len(postos))
     
+    # Mapeamento de cores por tipo de tarefa (exemplo simplificado)
+    cores = plt.cm.tab10(np.linspace(0, 1, 10))
+    
     for i, posto in enumerate(postos):
         for j, (tarefa, tempo) in enumerate(zip(posto['Tarefas'], posto['Tempos'])):
             ax.bar(postos_nomes[i], tempo, bottom=bottom[i], 
-                  label=tarefa if i == 0 else "", alpha=0.7)
+                  color=cores[j % len(cores)], alpha=0.7, label=tarefa if i == 0 else "")
             bottom[i] += tempo
     
     # Linha de tempo de ciclo
@@ -159,7 +157,6 @@ def gerar_grafico_yamazumi(postos, tempo_ciclo):
     plt.tight_layout()
     
     return fig
-
 # Processamento do arquivo upload
 if uploaded_file is not None:
     try:
@@ -234,7 +231,7 @@ if uploaded_file is not None:
             df_resultados = pd.DataFrame(dados_postos)
             df_resultados.to_excel(writer, sheet_name='Resultados', index=False)
             
-            # Salhar métricas
+            # Salvar métricas
             metricas = {
                 'Métrica': ['Número de Postos', 'Eficiência Total', 'Tempo de Ciclo', 'Tempo Total Linha'],
                 'Valor': [len(postos), f"{eficiencia_total:.1f}%", f"{tempo_ciclo:.1f}s", f"{tempo_total:.1f}s"]
